@@ -8,9 +8,6 @@ All notable changes to claude-cowork-service will be documented in this file.
 - **`isDebugLoggingEnabled` RPC** — Returns current debug logging state (matches Windows cowork-svc.exe protocol)
 - **`startupStep` events** — Emits `CERTIFICATE` and `VirtualDiskAttachments` startup progress events during `startVM` (matches Windows cowork-svc.exe protocol)
 
-### Documentation
-- **CoworkSpaces** — Documented that Spaces functionality lives in the Electron main process (claude-desktop-bin), not in this daemon
-
 ## 1.0.10 — 2026-03-04
 
 ### Fixed

@@ -174,18 +174,6 @@ The daemon listens on `$XDG_RUNTIME_DIR/cowork-vm-service.sock` and handles 18 R
 
 Claude Desktop assumes a VM with paths like `/sessions/<name>/mnt/...`. The daemon remaps these to `~/.local/share/claude-cowork/sessions/<name>/` with symlinks for mount points.
 
-## CoworkSpaces
-
-CoworkSpaces (folder/project/link organization for Cowork sessions) is handled entirely by the Electron main process in Claude Desktop — **not** by this daemon. The `cowork-svc.exe` on Windows has zero Spaces-related RPC methods.
-
-On Linux, `claude-desktop-bin` includes a full file-based Spaces implementation (`fix_cowork_spaces.py`) that:
-- Stores spaces in `~/.config/Claude/spaces.json`
-- Implements all 17 CRUD IPC handlers (getAllSpaces, createSpace, etc.)
-- Supports folder/project/link management, file operations, and auto-memory directories
-- Registers with the SpaceManager singleton so `resolveSpaceContext` works for sessions
-
-This daemon does not need any Spaces-related changes.
-
 ## Relationship to claude-desktop-bin
 
 This package is an **optional companion** to [claude-desktop-bin](https://github.com/patrickjaja/claude-desktop-bin) (the AUR package for Claude Desktop on Linux).
