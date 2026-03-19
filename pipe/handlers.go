@@ -66,6 +66,8 @@ func (h *Handler) Handle(conn net.Conn, payload []byte) {
 		h.handleAddApprovedOauthToken(conn, req)
 	case "setDebugLogging":
 		h.handleSetDebugLogging(conn, req)
+	case "isDebugLoggingEnabled":
+		h.handleIsDebugLoggingEnabled(conn, req)
 	case "subscribeEvents":
 		h.handleSubscribeEvents(conn, req)
 	case "getDownloadStatus":
@@ -375,7 +377,12 @@ func (h *Handler) handleSetDebugLogging(conn net.Conn, req Request) {
 		return
 	}
 	h.backend.SetDebugLogging(p.Enabled)
+	h.debug = p.Enabled
 	WriteResponse(conn, nil)
+}
+
+func (h *Handler) handleIsDebugLoggingEnabled(conn net.Conn, req Request) {
+	WriteResponse(conn, map[string]bool{"enabled": h.debug})
 }
 
 func (h *Handler) handleSubscribeEvents(conn net.Conn, req Request) {

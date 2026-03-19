@@ -136,7 +136,7 @@ cowork-svc-linux -debug
 
 ## How It Works
 
-The daemon listens on `$XDG_RUNTIME_DIR/cowork-vm-service.sock` and handles 17 RPC methods:
+The daemon listens on `$XDG_RUNTIME_DIR/cowork-vm-service.sock` and handles 18 RPC methods:
 
 | Method | What it does |
 |--------|-------------|
@@ -155,7 +155,8 @@ The daemon listens on `$XDG_RUNTIME_DIR/cowork-vm-service.sock` and handles 17 R
 | `installSdk` | No-op (SDK already on host) |
 | `addApprovedOauthToken` | Stores OAuth token for spawned processes |
 | `setDebugLogging` | Toggles verbose logging |
-| `subscribeEvents` | Streams process stdout/stderr/exit events |
+| `isDebugLoggingEnabled` | Returns current debug logging state |
+| `subscribeEvents` | Streams process stdout/stderr/exit/startupStep events |
 | `getDownloadStatus` | Returns `"ready"` (no bundle needed) |
 
 ### What happens during a Cowork session
@@ -172,6 +173,18 @@ The daemon listens on `$XDG_RUNTIME_DIR/cowork-vm-service.sock` and handles 17 R
 ### Path remapping
 
 Claude Desktop assumes a VM with paths like `/sessions/<name>/mnt/...`. The daemon remaps these to `~/.local/share/claude-cowork/sessions/<name>/` with symlinks for mount points.
+
+## CoworkSpaces
+
+CoworkSpaces (folder/project/link organization for Cowork sessions) is handled entirely by the Electron main process in Claude Desktop — **not** by this daemon. The `cowork-svc.exe` on Windows has zero Spaces-related RPC methods.
+
+On Linux, `claude-desktop-bin` includes a full file-based Spaces implementation (`fix_cowork_spaces.py`) that:
+- Stores spaces in `~/.config/Claude/spaces.json`
+- Implements all 17 CRUD IPC handlers (getAllSpaces, createSpace, etc.)
+- Supports folder/project/link management, file operations, and auto-memory directories
+- Registers with the SpaceManager singleton so `resolveSpaceContext` works for sessions
+
+This daemon does not need any Spaces-related changes.
 
 ## Relationship to claude-desktop-bin
 

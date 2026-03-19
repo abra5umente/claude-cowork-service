@@ -73,6 +73,18 @@ func NewAPIReachableEvent(reachable bool) APIReachableEvent {
 	return APIReachableEvent{Type: "apiReachability", Reachability: reachability, WillTryRecover: false}
 }
 
+// StartupStepEvent is emitted to report VM startup progress.
+// The Windows cowork-svc uses this to report stages like CERTIFICATE, VirtualDiskAttachments.
+type StartupStepEvent struct {
+	Type string `json:"type"`
+	Step string `json:"step"`
+}
+
+// NewStartupStepEvent creates a startup progress event.
+func NewStartupStepEvent(step string) StartupStepEvent {
+	return StartupStepEvent{Type: "startupStep", Step: step}
+}
+
 // NewErrorEvent creates a process error event.
 func NewErrorEvent(processID string, message string, fatal bool) ErrorEvent {
 	return ErrorEvent{Type: "error", ProcessID: processID, Message: message, Fatal: fatal}
