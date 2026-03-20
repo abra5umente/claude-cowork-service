@@ -272,6 +272,3 @@ print(json.loads(sock.recv(length)))
 > This project is not affiliated with, endorsed by, or sponsored by Anthropic.
 > "Claude" is a trademark of Anthropic PBC.
 
-## License
-
-MIT
