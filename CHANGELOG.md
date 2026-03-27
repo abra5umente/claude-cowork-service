@@ -7,6 +7,9 @@ All notable changes to claude-cowork-service will be documented in this file.
 ### Added
 - **NixOS module evaluation tests in CI** — Verify module.nix produces correct systemd service config (ExecStart, Restart, wantedBy, extraPath wiring) via `nix flake check`
 
+### Removed
+- **Hardcoded binary fallback paths** — Removed Stage 4 fallback (`~/.npm-global/bin`, `~/.local/bin`, etc.) from binary resolution; stages 1-3 (LookPath, login shell, interactive shell) already resolve user-installed binaries reliably, and NixOS users now have `extraPath`
+
 ## 1.0.16 — 2026-03-23
 
 ### Changed

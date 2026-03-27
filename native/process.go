@@ -65,8 +65,8 @@ func (pt *processTracker) spawn(id string, cmd string, args []string, env map[st
 
 	// If the given path doesn't exist, try to find it in PATH.
 	// Systemd services have minimal PATH (/usr/local/bin:/usr/bin), so we use
-	// a multi-stage fallback to locate binaries installed in user-specific locations
-	// (npm global, ~/.local/bin, nvm, etc.).
+	// multi-stage shell-based fallbacks to locate binaries installed in
+	// user-specific locations (npm global, ~/.local/bin, nvm, etc.).
 	if _, err := os.Stat(cmd); err != nil {
 		base := filepath.Base(cmd)
 		resolved := ""
@@ -103,22 +103,6 @@ func (pt *processTracker) spawn(id string, cmd string, args []string, env map[st
 							resolved = line
 						}
 					}
-				}
-			}
-		}
-
-		// Stage 4: hardcoded common locations
-		if resolved == "" {
-			home := os.Getenv("HOME")
-			for _, candidate := range []string{
-				filepath.Join(home, ".local", "bin", base),
-				filepath.Join(home, ".npm-global", "bin", base),
-				"/usr/local/bin/" + base,
-				"/usr/bin/" + base,
-			} {
-				if _, statErr := os.Stat(candidate); statErr == nil {
-					resolved = candidate
-					break
 				}
 			}
 		}
