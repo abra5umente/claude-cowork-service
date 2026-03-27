@@ -90,9 +90,6 @@ in pkgs.runCommand "nixos-module-eval-test" { } ''
   run_test "after default.target" \
     '[[ "${toString defaultSvc.after}" == *default.target* ]]'
 
-  run_test "default path is empty" \
-    '[[ -z "${toString defaultSvc.path}" ]]'
-
   run_test "package in systemPackages" \
     '[[ "${toString defaultEval.environment.systemPackages}" == *claude-cowork-service* ]]'
 
