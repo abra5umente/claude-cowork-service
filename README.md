@@ -24,14 +24,25 @@ sudo apt install claude-cowork-service
 
 Updates are automatic via `sudo apt update && sudo apt upgrade`.
 
-### Fedora / RHEL (.rpm)
+### Fedora / RHEL (DNF Repository)
 
 ```bash
-# Download and install latest release
-sudo dnf install https://github.com/patrickjaja/claude-cowork-service/releases/latest/download/claude-cowork-service-latest.x86_64.rpm
+# Add repository (one-time setup)
+curl -fsSL https://patrickjaja.github.io/claude-cowork-service/install-rpm.sh | sudo bash
+
+# Install
+sudo dnf install claude-cowork-service
 ```
 
-> **Note:** No automatic updates. Re-run the command above to update to the latest version.
+Updates are automatic via `sudo dnf upgrade`.
+
+<details>
+<summary>Manual .rpm install (without DNF repo)</summary>
+
+```bash
+sudo dnf install https://github.com/patrickjaja/claude-cowork-service/releases/latest/download/claude-cowork-service-latest.x86_64.rpm
+```
+</details>
 
 ### Arch Linux (AUR)
 
