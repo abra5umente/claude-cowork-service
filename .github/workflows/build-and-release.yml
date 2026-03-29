@@ -449,6 +449,26 @@ jobs:
             git push origin main
           }
 
+  validate-nix:
+    needs: [prepare, release]
+    if: needs.prepare.outputs.do_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (latest main with updated hash)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+
+      - name: Build with real fetchFromGitHub from release
+        run: |
+          echo "Validating Nix build using fetchFromGitHub from release..."
+          echo "This simulates exactly what users run."
+          nix build .#claude-cowork-service --no-link --print-build-logs --impure
+          echo "Nix build validation passed — hash matches released tarball"
+
   aur:
     needs: [prepare, release]
     if: needs.prepare.outputs.do_release == 'true'
