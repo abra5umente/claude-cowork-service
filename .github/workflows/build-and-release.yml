@@ -95,10 +95,11 @@ jobs:
         run: |
           # Build using local source instead of fetchFromGitHub.
           # The flake's package.nix uses fetchFromGitHub for end users;
-          # in CI we override src to the local checkout.
+          # in CI we override src to the flake's own git-tracked source tree.
           nix build --no-link --print-build-logs --impure --expr '
-            (builtins.getFlake (toString ./.)).packages.x86_64-linux.claude-cowork-service.overrideAttrs {
-              src = builtins.path { path = ./.; name = "source"; };
+            let flake = builtins.getFlake (toString ./.);
+            in flake.packages.x86_64-linux.claude-cowork-service.overrideAttrs {
+              src = flake.outPath;
             }
           '
       - name: Test NixOS module evaluation
