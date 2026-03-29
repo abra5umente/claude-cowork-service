@@ -77,7 +77,7 @@ Updates arrive through your AUR helper (e.g. `yay -Syu`).
 > services.claude-cowork.extraPath = [ pkgs.claude-code ];
 > ```
 >
-> **Dispatch** requires Claude Code >= 2.1.86 (fixes `CLAUDE_CODE_BRIEF` env parsing). If nixpkgs ships an older version, use `extraPath` to point to a newer install.
+> **Dispatch** requires Claude Code >= 2.1.86 (fixes `CLAUDE_CODE_BRIEF` env parsing). If nixpkgs ships an older version, [install Claude Code manually](https://docs.anthropic.com/en/docs/claude-code/overview) and use `extraPath` to point to it.
 
 Or run directly with Nix:
 ```bash
