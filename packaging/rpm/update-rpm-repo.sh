@@ -37,7 +37,15 @@ echo "Copied $(basename "$RPM_FILE") to rpm/$ARCH/"
 
 # Sign the RPM package (gpgcheck=1 in repo config requires this)
 RPM_BASENAME=$(basename "$RPM_FILE")
-echo "%_gpg_name $GPG_KEY_ID" > ~/.rpmmacros
+# Configure GPG for non-interactive use (no TTY in CI)
+mkdir -p ~/.gnupg
+echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+gpgconf --kill gpg-agent 2>/dev/null || true
+cat > ~/.rpmmacros <<MACROS
+%_gpg_name $GPG_KEY_ID
+%__gpg /usr/bin/gpg
+%_gpg_sign_cmd %{__gpg} gpg --batch --pinentry-mode loopback --no-armor --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
+MACROS
 rpm --addsign "$REPO_DIR/rpm/$ARCH/$RPM_BASENAME"
 
 # Verify signature — fail the pipeline if the RPM is not properly signed
