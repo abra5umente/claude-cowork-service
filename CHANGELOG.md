@@ -4,6 +4,18 @@ All notable changes to claude-cowork-service will be documented in this file.
 
 ## Unreleased
 
+### Changed
+- **Upstream update to Claude Desktop v1.2.234** (from v1.1.9669)
+- **cowork-svc.exe**: Rebuild only — same size (11,174,736 bytes), same Go version (go1.24.13), no new RPC methods or handler functions. Updated build timestamps and VCS revision
+- **VM bundle**: Unchanged — same SHA (`5680b11b...`), same file checksums
+- **Electron 40.8.5** (was 40.4.1), **claude-agent-sdk-future 0.2.90-dev** (was 0.2.86-dev)
+- **New Desktop features** (no Go code changes needed):
+  - `dispatchCodeTasksPermissionMode` preference for dispatch code task permission modes
+  - `start_code_task` MCP dispatch tool for code-specific work
+  - Plugin permission bridge mounts (`.cowork-perm-req`, `.cowork-perm-resp`) in `additionalMounts` — handled by existing mount symlink logic
+  - `.cowork-lib` plugin shim library mount — handled by existing mount symlink logic
+- **Updated reference docs** — `COWORK_RPC_PROTOCOL.md`, `COWORK_SVC_BINARY.md`, `COWORK_VM_BUNDLE.md` updated to v1.2.234
+
 ## 1.0.38 — 2026-04-01
 
 ## 1.0.37 — 2026-03-31

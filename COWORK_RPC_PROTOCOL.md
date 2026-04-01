@@ -1,4 +1,4 @@
-# Cowork RPC Protocol Reference — v1.1.9669
+# Cowork RPC Protocol Reference — v1.2.234
 
 > **This document is the single source of truth for the protocol between Claude Desktop and cowork-svc.**
 > Re-validate on every upstream Claude Desktop version update.
@@ -234,6 +234,13 @@ Spawns a command as a child process. This is the most complex method in the prot
 - `oneShot` (boolean, default `false`): For one-shot command execution.
 - `mountSkeletonHome` (boolean, default `false`): Whether to mount a skeleton home directory.
 - `mountConda` (string, optional): Conda environment mount mode — `"ro"`, `"rw"`, or `"rwd"`. Ignored on native Linux.
+
+**New additionalMounts entries (v1.2.234):**
+- `.cowork-lib` (mode `"ro"`): Plugin shim library directory. Contains `shim.sh` sourced by plugin shims for token validation, permission gating, and arch-aware binary dispatch.
+- `.cowork-perm-req` (mode `"rw"`): Permission bridge request directory. Plugin shims write JSON request files here to trigger user confirmation prompts.
+- `.cowork-perm-resp` (mode `"ro"`): Permission bridge response directory. Host writes `"allow"` or `"deny"` responses here after user interaction.
+
+These mounts are only present when plugins are configured for the session. On native Linux, they are processed by the existing mount symlink handler.
 
 **Response:**
 ```json
@@ -777,6 +784,8 @@ Desktop passes `--disallowedTools` containing tools handled by the VM runtime:
 
 On native Linux there is no VM runtime, so the entire flag and its value are removed -- all tools are available to the CLI directly.
 
+**Unchanged in v1.2.234** — same disallowedTools list.
+
 ### 2. `--brief` flag injection
 
 Desktop passes `CLAUDE_CODE_BRIEF=1` in the environment for Ditto/dispatch agent sessions only (not for regular cowork). The backend detects this and injects the `--brief` CLI flag, which ensures the CLI registers `SendUserMessage` in its tool list. This was broken in CLI v2.1.79-2.1.85, fixed in v2.1.86.
@@ -827,6 +836,10 @@ Claude Desktop uses three session types, identified by the `CLAUDE_CODE_TAGS` en
 | Ditto orchestrator | `lam_session_type:agent` | `1` | **Yes** | **Yes** |
 | Dispatch child | `lam_session_type:dispatch_child` | *(not set)* | No | No |
 
+**New in v1.2.234:** `dispatchCodeTasksPermissionMode` preference controls the permission mode for dispatch code tasks (`"default"`, `"acceptEdits"`, `"plan"`, `"auto"`, `"bypassPermissions"`). This is a Desktop UI setting — it does not affect the RPC protocol.
+
+**New dispatch tools (v1.2.234):** `start_code_task` (MCP tool) — specialized dispatch tool for code-related work. Desktop prefers this over `start_task` for editing repos, running tests, etc. This is handled by Desktop's MCP proxy, not by cowork-svc.
+
 ### Regular Cowork (`chat`)
 
 Standard Cowork sessions initiated from the Desktop UI. The user types a message and a Claude Code CLI session handles it. No dispatch tools, no brief mode.
@@ -860,6 +873,8 @@ These methods exist in cowork-svc.exe (from binary string analysis) but are not 
 **Note:** New methods in the binary don't necessarily mean new RPC protocol methods — some are internal Go functions. Monitor `handleX` patterns specifically.
 
 **Newly implemented in v1.1.9669:** `createDiskImage`, `getSessionsDiskInfo`, `deleteSessionDirs` (all no-ops on native Linux).
+
+**v1.2.234:** No new RPC methods. Protocol remains at 21 methods and 8 event types.
 
 ---
 

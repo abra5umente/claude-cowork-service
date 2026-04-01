@@ -1,4 +1,4 @@
-# Cowork VM Bundle Reference — v1.1.9669
+# Cowork VM Bundle Reference — v1.2.234
 
 > Re-validate on every upstream Claude Desktop version update.
 
@@ -9,7 +9,9 @@
 - VM images are downloaded from Anthropic CDN on first use
 - URL pattern: `https://downloads.claude.ai/vms/linux/<arch>/<sha>/<filename>.zst`
 
-## Current Config (v1.1.9669)
+## Current Config (v1.2.234)
+
+> **Note:** The VM bundle SHA and all file checksums are unchanged from v1.1.9669. Only the Claude Desktop version changed.
 
 - **SHA:** `5680b11bcdab215cccf07e0c0bd1bd9213b0c25d`
 - **Platforms:** darwin (arm64, x64), win32 (arm64, x64)
@@ -65,7 +67,7 @@ vm-bundle/
 ├── initrd.zst               (164 MB compressed)
 ├── vm-bundle-config.json    (parsed from app.asar JS)
 ├── app-asar-extracted/      (full Electron app for investigation)
-└── .version                 (Claude Desktop version, e.g. "1.1.9669")
+└── .version                 (Claude Desktop version, e.g. "1.2.234")
 ```
 
 ## How to Parse Config from JS
@@ -87,7 +89,7 @@ The extract script finds it with regex: `{sha:"[a-f0-9]{40}",files:{`
 
 ---
 
-## VM Rootfs Deep Dive (v1.1.9493 — needs re-validation for v1.1.9669)
+## VM Rootfs Deep Dive (v1.1.9493 — needs re-validation for v1.2.234)
 
 ### Base System
 
@@ -214,6 +216,7 @@ Key installed packages: build-essential, curl, ffmpeg, gcc-11, ghostscript, git,
 
 | Claude Desktop Version | VM Bundle SHA | Notable Changes |
 |----------------------|--------------|-----------------|
+| 1.2.234 | 5680b11bcdab215cccf07e0c0bd1bd9213b0c25d | Unchanged from v1.1.9669 — same SHA, same checksums |
 | 1.1.9669 | 5680b11bcdab215cccf07e0c0bd1bd9213b0c25d | New VM images, all checksums changed, conda support |
 | 1.1.9493 | fb30784dadb34104626c8cf6d8f90dd47cd393cc | Previous |
 | 1.1.9310 | (check previous commit) | — |

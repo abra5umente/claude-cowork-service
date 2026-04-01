@@ -1,4 +1,4 @@
-# Cowork Service Binary Analysis — v1.1.9669
+# Cowork Service Binary Analysis — v1.2.234
 
 ## Binary Overview
 
@@ -15,12 +15,12 @@ The extract script pulls all files from the same directory level as cowork-svc.e
 | cowork-svc.exe | 11 MB | Windows Hyper-V backend (Go binary) |
 | app.asar | 19 MB | Claude Desktop Electron app (same as main app) |
 | chrome-native-host.exe | 1 MB | Chrome native messaging host for browser tools |
-| cowork-plugin-shim.sh | 7.5 KB | Plugin permission gating library (new in v1.1.9669) |
+| cowork-plugin-shim.sh | 7.5 KB | Plugin permission gating library (new in v1.1.9669, updated in v1.2.234) |
 | smol-bin.x64.vhdx | 36 MB | Empty ext4 filesystem for sdk-daemon updater |
 | default.clod | 97 KB | Default configuration/data |
 | *.json (locale files) | ~15-75 KB each | UI translations (de-DE, en-US, es-419, etc.) |
 | *.png / *.ico | ~2-4 KB each | Tray icons (light/dark, various DPI) |
-| .version | 9 bytes | Version string ("1.1.9669") |
+| .version | 8 bytes | Version string ("1.2.234") |
 
 ## Windows Architecture
 
@@ -69,16 +69,16 @@ Claude Desktop (Electron, patched)
 
 ---
 
-## cowork-svc.exe Deep Analysis (v1.1.9669)
+## cowork-svc.exe Deep Analysis (v1.2.234)
 
 | Property | Value |
 |----------|-------|
 | **File type** | PE32+ executable for MS Windows 6.01 (console), x86-64, 8 sections |
 | **Go version** | go1.24.13 |
 | **Module** | github.com/anthropics/cowork-win32-service |
-| **Build date** | 2026-03-30 |
+| **Build date** | 2026-04-01 |
 | **Size** | 11,174,736 bytes |
-| **SHA256** | 9a94ec5d95c9642a5d7bbb4503d804b8e89f748c8a5359f57304b7eec6e693bb |
+| **SHA256** | d868ee069b5618a406c44b40a24eed2c86883a23bca7c867d16ac6ea5cf44d0b |
 
 ### Go Module Structure (from binary strings)
 
@@ -187,14 +187,16 @@ Three packages: `main`, `pipe`, `vm`
 
 **Newly handled in v1.1.9669:** `handleCreateDiskImage`, `getSessionsDiskInfo`, `deleteSessionDirs` (all no-ops on native Linux).
 
+**v1.2.234:** No new handler functions. Binary is a rebuild with updated timestamps only (identical size).
+
 ---
 
-## bin/ Directory Checksums (v1.1.9669)
+## bin/ Directory Checksums (v1.2.234)
 
 | File | SHA256 |
 |------|--------|
-| cowork-svc.exe | 9a94ec5d95c9642a5d7bbb4503d804b8e89f748c8a5359f57304b7eec6e693bb |
-| cowork-plugin-shim.sh | *(new — plugin permission gating library)* |
+| cowork-svc.exe | d868ee069b5618a406c44b40a24eed2c86883a23bca7c867d16ac6ea5cf44d0b |
+| cowork-plugin-shim.sh | 2fbef5ee6c07c26a1f7cd9204e1b6d37537edd2b96c0ce025010b890cb5935e7 |
 | chrome-native-host.exe | *(check with sha256sum)* |
 | smol-bin.x64.vhdx | *(check with sha256sum)* |
 | default.clod | *(check with sha256sum)* |
@@ -205,8 +207,8 @@ Three packages: `main`, `pipe`, `vm`
 
 | Property | Value |
 |----------|-------|
-| **Package** | @ant/desktop v1.1.9669 |
-| **Electron** | 40.4.1 |
+| **Package** | @ant/desktop v1.2.234 |
+| **Electron** | 40.8.5 |
 | **Node requirement** | >=22.0.0 |
 
 ### New in v1.1.9669
@@ -218,24 +220,34 @@ Three packages: `main`, `pipe`, `vm`
 - **New cowork tools**: `request_network_access`, `request_host_access`, `render_dashboard`/`patch_dashboard`/`read_dashboard`, `display_artifacts`
 - **`--cowork` flag** — appended to CLI commands when `useCoworkFlag` is true
 
+### New in v1.2.234
+
+- **`dispatchCodeTasksPermissionMode`** — New preference controlling permission mode for dispatch code tasks: `"default"`, `"acceptEdits"`, `"plan"`, `"auto"`, `"bypassPermissions"` (default: `"acceptEdits"`)
+- **`start_code_task` MCP tool** — New dispatch tool for code-specific tasks (in addition to `start_task`). Desktop prefers this for code work (editing repos, running tests)
+- **Plugin permission bridge mounts** — Desktop now passes `.cowork-perm-req` (rw) and `.cowork-perm-resp` (ro) in `additionalMounts` for plugin confirmation protocol
+- **`.cowork-lib` shim mount** — Plugin shim library mounted read-only at `mnt/.cowork-lib/shim.sh` for plugins to source
+- **`remotePluginsPath`** — New internal Desktop parameter used to construct `additionalMounts` (not passed directly via RPC)
+- **Electron 40.8.5** — Upgraded from 40.4.1
+- **claude-agent-sdk-future 0.2.90-dev** — Updated from 0.2.86-dev
+
 ### Key Dependency Versions
 
-*(verified identical to v1.1.9493)*
+*(verified for v1.2.234)*
 
-| Package | Version |
-|---------|---------|
-| @anthropic-ai/claude-agent-sdk | 0.2.87 |
-| @anthropic-ai/claude-agent-sdk-future | 0.2.86-dev.20260327 |
-| @anthropic-ai/conway-client | 0.2.0-dev.20260325 |
-| @anthropic-ai/mcpb | 2.1.2 |
-| @anthropic-ai/sdk | ^0.70.0 |
-| @modelcontextprotocol/sdk | 1.28.0 |
-| electron | 40.4.1 |
-| playwright-core | 1.57.0 |
-| typescript | ~5.8.3 |
-| zod | ^3.25.64 |
-| ws | ^8.18.0 |
-| ssh2 | ^1.16.0 |
+| Package | Version | Changed from v1.1.9669 |
+|---------|---------|------------------------|
+| @anthropic-ai/claude-agent-sdk | 0.2.87 | — |
+| @anthropic-ai/claude-agent-sdk-future | 0.2.90-dev.20260331 | was 0.2.86-dev.20260327 |
+| @anthropic-ai/conway-client | 0.2.0-dev.20260325 | — |
+| @anthropic-ai/mcpb | 2.1.2 | — |
+| @anthropic-ai/sdk | ^0.70.0 | — |
+| @modelcontextprotocol/sdk | 1.28.0 | — |
+| electron | 40.8.5 | was 40.4.1 |
+| playwright-core | 1.57.0 | — |
+| typescript | ~5.8.3 | — |
+| zod | ^3.25.64 | — |
+| ws | ^8.18.0 | — |
+| ssh2 | ^1.16.0 | — |
 
 ### Internal Workspace Packages
 
@@ -268,6 +280,7 @@ Three packages: `main`, `pipe`, `vm`
 
 | Claude Desktop Version | cowork-svc.exe Size | Notable Changes |
 |----------------------|-------------------|-----------------|
+| 1.2.234 | 11,174,736 bytes | Rebuild only; Electron 40.8.5, dispatchCodeTasksPermissionMode, plugin permission bridge mounts |
 | 1.1.9669 | 11,174,736 bytes | New: cowork-plugin-shim.sh, conda disk support, plugin system, coworkArtifact.js |
 | 1.1.9493 | 11,162,448 bytes | Previous |
 | 1.1.9310 | (check previous) | — |
